@@ -10,6 +10,7 @@ namespace EditorRPG
         public World Map { get; set; }
         public Engine(Control control)
         {
+            control.BackgroundImage = new Bitmap(1024, 1024);
             Map = new World(control)
             {
                 Width = 1024,
@@ -30,7 +31,7 @@ namespace EditorRPG
         public bool isDrawGrid { get; set; } = false;
         public World(Control control)
         {
-            graphics = Graphics.FromHwnd(control.Handle);
+            graphics = Graphics.FromImage(control.BackgroundImage);
         }
 
         public void Draw()
@@ -39,6 +40,7 @@ namespace EditorRPG
             Tiles = new Image[Width / 32, Height / 32];
             Bounds = new Rectangle(0, 0, Width, Height);
             graphics.Clear(Color.Black);
+            graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
             for (int x = 0; x < Width / 32; x++)
             {
                 for (int y = 0; y < Height / 32; y++)
@@ -49,11 +51,11 @@ namespace EditorRPG
             for (int x = 0; x < Width / 32; x++)
             {
                 for (int y = 0; y < Height / 32; y++)
-                {                       
+                {
                     if (Tiles[x, y] != null)
                         graphics.DrawImage(Tiles[x, y], Field[x, y]);
-                    if (isDrawGrid)
-                        graphics.DrawRectangle(Pens.Green, Field[x, y]);
+                    //if (isDrawGrid)
+                    //    graphics.DrawRectangle(Pens.Green, Field[x, y]);
                 }
             }
         }
@@ -71,7 +73,7 @@ namespace EditorRPG
                     if (Tiles[x, y] != null)
                         graphics.DrawImage(Tiles[x, y], Field[x, y]);
                     if (isDrawGrid)
-                        graphics.DrawRectangle(Pens.Green, Field[x, y]);
+                        graphics.DrawRectangle(new Pen(Color.FromArgb(20, 20, 20)), Field[x, y]);
                 }
             }
         }
@@ -84,8 +86,8 @@ namespace EditorRPG
                 {
                     if (Tiles[x, y] != null)
                         graphics.DrawImage(Tiles[x, y], Field[x, y]);
-                    if(isDrawGrid)
-                        graphics.DrawRectangle(Pens.Green, Field[x, y]);
+                    if (isDrawGrid)
+                        graphics.DrawRectangle(new Pen(Color.FromArgb(20, 20, 20)), Field[x, y]);
                 }
             }
         }

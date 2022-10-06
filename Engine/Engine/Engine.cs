@@ -1,8 +1,6 @@
 ﻿using Engine.Animation;
 using Engine.Map;
-using Engine.Map.GameObject;
 using Engine.Player;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -41,11 +39,10 @@ namespace EngineRPG
 
         //public Crate Box;
 
-        public Engine(Control control)
+        public Engine()
         {
             Animator = new Animator();
             Dir = new Direction();
-            Control = control;
 
             Updater = new Timer()
             {
@@ -65,14 +62,15 @@ namespace EngineRPG
 
         public void StartEngine(Graphics graphics)
         {
-            World.Draw(graphics);
-            LoadMap("Data/Maps/map.gamemap");
-            World.Update(graphics);
+            World.Draw();
+            LoadMap("Data/Maps/map_2.gamemap");
+            World.Update();
             Player.Icon = new Bitmap("Data/Player/Down/frame_1.gif");
-            Player.Draw(graphics);
-            Player.DrawStats(graphics, MiniMap.Width, 0);
-            MiniMap.Draw(graphics, Player, World);
-            
+            Player.Draw();
+            Player.DrawStats(MiniMap.Width, 0);
+            Updater.Start();
+            MiniMap.Draw(Player, World);
+
         }
 
         public void DrawSelectedRect(Graphics graph, Rectangle rect)

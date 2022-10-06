@@ -7,29 +7,31 @@ namespace GameRPG
     {
         //
         EngineRPG.Engine EngineRPG;
-        Timer Updater;
+        Graphics g;
         public mainform()
         {
             InitializeComponent();
-            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint | ControlStyles.ResizeRedraw, true);
+            //this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint | ControlStyles.ResizeRedraw, true);
             Application.Idle += delegate { Invalidate(); };
             //
-            EngineRPG = new EngineRPG.Engine(this)
+            Viewport.BackgroundImage = new Bitmap(1024, 1024);
+
+            EngineRPG = new EngineRPG.Engine()
             {
-                World = new Engine.Map.World(this)
+                World = new Engine.Map.World(Viewport)
                 {
                     Width = 1024,
                     Height = 1024,
                     Bounds = new Rectangle(0, 0, Width, Height),
                     TileSize = new Point(32, 32)
                 },
-                MiniMap = new Engine.Map.MiniMap()
+                MiniMap = new Engine.Map.MiniMap(Viewport)
                 {
-                    Width = 200,
-                    Height = 200,
+                    Width = 120,
+                    Height = 120,
                     Location = new Point(0, 0)
                 },
-                Player = new Engine.Player.Player()
+                Player = new Engine.Player.Player(Viewport)
                 {
                     Location = new Point(256, 256),
                     exp_max = 100,
@@ -39,11 +41,21 @@ namespace GameRPG
                 }
             };
         }
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams handleParam = base.CreateParams;
+                handleParam.ExStyle |= 0x02000000;   // WS_EX_COMPOSITED       
+                return handleParam;
+            }
+        }
 
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            EngineRPG.StartEngine(e.Graphics);
+
+            EngineRPG.StartEngine(g);
             base.OnPaint(e);
         }
 
@@ -84,6 +96,16 @@ namespace GameRPG
             if (e.KeyCode == Keys.S)
                 EngineRPG.Stop();
             base.OnKeyUp(e);
+        }
+
+        private void mainform_MouseDown(object sender, MouseEventArgs e)
+        {
+            var x = e.X / 32;
+            var y = e.Y / 32;
+
+            var sel = EngineRPG.World.Field[x, y];
+            EngineRPG.World.AddBox(x, y, new Engine.Map.GameObject.Box() { Location = new Point(x, y) });
+            EngineRPG.World.Update();
         }
     }
 }

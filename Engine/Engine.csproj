@@ -48,7 +48,7 @@
   <ItemGroup>
     <Compile Include="Animation\Animator.cs" />
     <Compile Include="Engine\Engine.cs" />
-    <Compile Include="Map\GameObject\Crate.cs" />
+    <Compile Include="Map\GameObject\Box.cs" />
     <Compile Include="Map\MiniMap.cs" />
     <Compile Include="Map\World.cs" />
     <Compile Include="Player\Model.cs" />

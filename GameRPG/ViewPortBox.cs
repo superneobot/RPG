@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace EditorRPG
+namespace GameRPG
 {
     public class ViewPortBox : Panel
     {

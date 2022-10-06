@@ -15,7 +15,6 @@ namespace Engine.Animation
         public Animator()
         {
             Strip = new Image[5];
-            var dir = Direction.Down;
             //OutImage = Get();
             timer = new Timer();
             timer.Interval = 200;

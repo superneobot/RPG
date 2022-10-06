@@ -30,6 +30,8 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(editorform));
             this.ControlPanel = new System.Windows.Forms.Panel();
+            this.clear_btn = new System.Windows.Forms.Button();
+            this.draw_grid_bool = new System.Windows.Forms.CheckBox();
             this.load_btn = new System.Windows.Forms.Button();
             this.save_btn = new System.Windows.Forms.Button();
             this.road_btn = new System.Windows.Forms.Button();
@@ -41,14 +43,16 @@
             this.box = new System.Windows.Forms.Button();
             this.mouse_pos = new System.Windows.Forms.Label();
             this.m_size = new System.Windows.Forms.Label();
-            this.Viewport = new ViewPortBox();
-            this.draw_grid_bool = new System.Windows.Forms.CheckBox();
+            this.cleared_btn = new System.Windows.Forms.Button();
+            this.Viewport = new EditorRPG.ViewPortBox();
             this.ControlPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // ControlPanel
             // 
             this.ControlPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.ControlPanel.Controls.Add(this.cleared_btn);
+            this.ControlPanel.Controls.Add(this.clear_btn);
             this.ControlPanel.Controls.Add(this.draw_grid_bool);
             this.ControlPanel.Controls.Add(this.load_btn);
             this.ControlPanel.Controls.Add(this.save_btn);
@@ -67,6 +71,28 @@
             this.ControlPanel.Size = new System.Drawing.Size(1026, 100);
             this.ControlPanel.TabIndex = 0;
             this.ControlPanel.Click += new System.EventHandler(this.ControlPanel_Click);
+            // 
+            // clear_btn
+            // 
+            this.clear_btn.Location = new System.Drawing.Point(173, 70);
+            this.clear_btn.Name = "clear_btn";
+            this.clear_btn.Size = new System.Drawing.Size(75, 23);
+            this.clear_btn.TabIndex = 6;
+            this.clear_btn.Text = "Clear";
+            this.clear_btn.UseVisualStyleBackColor = true;
+            this.clear_btn.Click += new System.EventHandler(this.clear_btn_Click);
+            // 
+            // draw_grid_bool
+            // 
+            this.draw_grid_bool.AutoSize = true;
+            this.draw_grid_bool.Location = new System.Drawing.Point(11, 47);
+            this.draw_grid_bool.Name = "draw_grid_bool";
+            this.draw_grid_bool.Size = new System.Drawing.Size(71, 17);
+            this.draw_grid_bool.TabIndex = 5;
+            this.draw_grid_bool.Text = "Draw grid";
+            this.draw_grid_bool.UseVisualStyleBackColor = true;
+            this.draw_grid_bool.CheckedChanged += new System.EventHandler(this.draw_grid_bool_CheckedChanged);
+            this.draw_grid_bool.Click += new System.EventHandler(this.draw_grid_bool_Click);
             // 
             // load_btn
             // 
@@ -92,7 +118,7 @@
             // 
             this.road_btn.FlatAppearance.BorderSize = 0;
             this.road_btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.road_btn.Image = global::EditorRPG.Properties.Resources.road;
+            this.road_btn.Image = ((System.Drawing.Image)(resources.GetObject("road_btn.Image")));
             this.road_btn.Location = new System.Drawing.Point(355, 8);
             this.road_btn.Name = "road_btn";
             this.road_btn.Size = new System.Drawing.Size(32, 32);
@@ -104,7 +130,7 @@
             // 
             this.brick_btn.FlatAppearance.BorderSize = 0;
             this.brick_btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.brick_btn.Image = global::EditorRPG.Properties.Resources.brick;
+            this.brick_btn.Image = ((System.Drawing.Image)(resources.GetObject("brick_btn.Image")));
             this.brick_btn.Location = new System.Drawing.Point(317, 8);
             this.brick_btn.Name = "brick_btn";
             this.brick_btn.Size = new System.Drawing.Size(32, 32);
@@ -116,7 +142,7 @@
             // 
             this.earth.FlatAppearance.BorderSize = 0;
             this.earth.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.earth.Image = global::EditorRPG.Properties.Resources.earth;
+            this.earth.Image = ((System.Drawing.Image)(resources.GetObject("earth.Image")));
             this.earth.Location = new System.Drawing.Point(279, 8);
             this.earth.Name = "earth";
             this.earth.Size = new System.Drawing.Size(32, 32);
@@ -128,8 +154,8 @@
             // 
             this.top_grass_btn.FlatAppearance.BorderSize = 0;
             this.top_grass_btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.top_grass_btn.Image = global::EditorRPG.Properties.Resources.top_grass;
-            this.top_grass_btn.Location = new System.Drawing.Point(241, 46);
+            this.top_grass_btn.Image = ((System.Drawing.Image)(resources.GetObject("top_grass_btn.Image")));
+            this.top_grass_btn.Location = new System.Drawing.Point(393, 8);
             this.top_grass_btn.Name = "top_grass_btn";
             this.top_grass_btn.Size = new System.Drawing.Size(32, 32);
             this.top_grass_btn.TabIndex = 2;
@@ -140,7 +166,7 @@
             // 
             this.bottom_grass_btn.FlatAppearance.BorderSize = 0;
             this.bottom_grass_btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.bottom_grass_btn.Image = global::EditorRPG.Properties.Resources.bottom_grass;
+            this.bottom_grass_btn.Image = ((System.Drawing.Image)(resources.GetObject("bottom_grass_btn.Image")));
             this.bottom_grass_btn.Location = new System.Drawing.Point(241, 8);
             this.bottom_grass_btn.Name = "bottom_grass_btn";
             this.bottom_grass_btn.Size = new System.Drawing.Size(32, 32);
@@ -190,6 +216,20 @@
             this.m_size.TabIndex = 0;
             this.m_size.Text = "Map Size: ";
             // 
+            // cleared_btn
+            // 
+            this.cleared_btn.BackColor = System.Drawing.Color.Black;
+            this.cleared_btn.FlatAppearance.BorderSize = 0;
+            this.cleared_btn.FlatAppearance.MouseDownBackColor = System.Drawing.Color.DarkGray;
+            this.cleared_btn.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Gainsboro;
+            this.cleared_btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cleared_btn.Location = new System.Drawing.Point(431, 8);
+            this.cleared_btn.Name = "cleared_btn";
+            this.cleared_btn.Size = new System.Drawing.Size(32, 32);
+            this.cleared_btn.TabIndex = 7;
+            this.cleared_btn.UseVisualStyleBackColor = false;
+            this.cleared_btn.Click += new System.EventHandler(this.cleared_btn_Click);
+            // 
             // Viewport
             // 
             this.Viewport.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -202,17 +242,6 @@
             this.Viewport.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Viewport_MouseMove);
             this.Viewport.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Viewport_MouseUp);
             // 
-            // draw_grid_bool
-            // 
-            this.draw_grid_bool.AutoSize = true;
-            this.draw_grid_bool.Location = new System.Drawing.Point(11, 47);
-            this.draw_grid_bool.Name = "draw_grid_bool";
-            this.draw_grid_bool.Size = new System.Drawing.Size(71, 17);
-            this.draw_grid_bool.TabIndex = 5;
-            this.draw_grid_bool.Text = "Draw grid";
-            this.draw_grid_bool.UseVisualStyleBackColor = true;
-            this.draw_grid_bool.Click += new System.EventHandler(this.draw_grid_bool_Click);
-            // 
             // editorform
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -220,10 +249,12 @@
             this.ClientSize = new System.Drawing.Size(1026, 1125);
             this.Controls.Add(this.Viewport);
             this.Controls.Add(this.ControlPanel);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "editorform";
             this.ShowIcon = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Editor RPG";
             this.Load += new System.EventHandler(this.editorform_Load);
             this.ControlPanel.ResumeLayout(false);
@@ -248,6 +279,8 @@
         private System.Windows.Forms.Button brick_btn;
         private System.Windows.Forms.Button top_grass_btn;
         private System.Windows.Forms.CheckBox draw_grid_bool;
+        private System.Windows.Forms.Button clear_btn;
+        private System.Windows.Forms.Button cleared_btn;
     }
 }
 

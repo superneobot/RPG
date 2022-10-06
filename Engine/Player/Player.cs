@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Windows.Forms;
 
 namespace Engine.Player
 {
@@ -53,8 +54,10 @@ namespace Engine.Player
         //
         #endregion
         Font Font = new Font("Motiva Sans", 8.0F);
-        public Player()
+        Graphics graphics { get; set; }
+        public Player(Control control)
         {
+            graphics = Graphics.FromImage(control.BackgroundImage);
             Width = 32;
             Height = 32;
             Location = new Point(256, 256);
@@ -63,89 +66,89 @@ namespace Engine.Player
         }
 
 
-        public void Draw(Graphics graph)
+        public void Draw()
         {
             Bounds = new Rectangle(Location.X, Location.Y, Width, Height);
             if (Hero != null)
             {
-                graph.DrawImage(Hero, Bounds);
+                graphics.DrawImage(Hero, Bounds);
             }
             else
             {
-                graph.DrawRectangle(new Pen(Color.Red), Bounds);
-                graph.DrawString(Type, Font, new SolidBrush(Color.Red), Bounds.Location.X - 1, Bounds.Location.Y - 10);
-                graph.DrawLine(new Pen(Color.Red), new Point(Bounds.Location.X, Bounds.Location.Y), new Point(Bounds.Location.X + Width, Bounds.Location.Y + Height));
-                graph.DrawLine(new Pen(Color.Red), new Point(Bounds.Location.X, Bounds.Location.Y + Height), new Point(Bounds.Location.X + Width, Bounds.Location.Y));
+                graphics.DrawRectangle(new Pen(Color.Red), Bounds);
+                graphics.DrawString(Type, Font, new SolidBrush(Color.Red), Bounds.Location.X - 1, Bounds.Location.Y - 10);
+                graphics.DrawLine(new Pen(Color.Red), new Point(Bounds.Location.X, Bounds.Location.Y), new Point(Bounds.Location.X + Width, Bounds.Location.Y + Height));
+                graphics.DrawLine(new Pen(Color.Red), new Point(Bounds.Location.X, Bounds.Location.Y + Height), new Point(Bounds.Location.X + Width, Bounds.Location.Y));
             }
         }
 
-        public void DrawStats(Graphics g, float pos_x, float pos_y)
+        public void DrawStats(float pos_x, float pos_y)
         {
             Font font = new Font("Motiva Sans", 12.0F, FontStyle.Regular, GraphicsUnit.Pixel);
             SolidBrush panel_stats_color = new SolidBrush(Color.FromArgb(10, 10, 10));
             //Stats bar
-            g.FillRectangle(panel_stats_color, pos_x, pos_y, 200, 70);
+            graphics.FillRectangle(panel_stats_color, pos_x, pos_y, 200, 70);
             //Player icon             
             if (Icon != null)
             {
                 Rectangle rect = new Rectangle((int)(pos_x + 5), (int)(pos_y + 5), 32, 32);
-                g.DrawImage(Icon, rect);
+                graphics.DrawImage(Icon, rect);
             }
             else
             {
-                g.DrawRectangle(new Pen(Color.Silver), pos_x + 5, pos_y + 5, 40, 40);
+                graphics.DrawRectangle(new Pen(Color.Silver), pos_x + 5, pos_y + 5, 40, 40);
             }
             //Player name
-            g.DrawString(Name, font, Brushes.Silver, pos_x + 50, pos_y + 3);
+            graphics.DrawString(Name, font, Brushes.Silver, pos_x + 50, pos_y + 3);
 
             //Player health
             #region Health bar
             //DrawBar(g, new Rectangle((int)pos_x + 50, (int)pos_y + 18, 100, 10), Color.Red);
-            g.DrawRectangle(new Pen(Color.Red), (int)pos_x + 50, (int)pos_y + 18, 100, 10);
-            g.FillRectangle(Brushes.Pink, (int)pos_x + 50, (int)pos_y + 18, 100, 10);
+            graphics.DrawRectangle(new Pen(Color.Red), (int)pos_x + 50, (int)pos_y + 18, 100, 10);
+            graphics.FillRectangle(Brushes.Pink, (int)pos_x + 50, (int)pos_y + 18, 100, 10);
             Rectangle rect_health = new Rectangle((int)pos_x + 50, (int)pos_y + 18, 100, 10);
             Rectangle healthProgress = new Rectangle(
                 rect_health.X,
                 rect_health.Y,
                 CalculateProgressRectSize(rect_health, maxHealth, health),
                 rect_health.Height);
-            DrawHealthBar(g, healthProgress);
+            DrawHealthBar(graphics, healthProgress);
             //g.DrawString($"{Health}", font, Brushes.Red, pos_x + 150, pos_y + 17);
             #endregion
 
             //Player mana
             #region Mana bar
             //DrawBar(g, new Rectangle((int)pos_x + 49, (int)pos_y + 30, 100, 10), Color.Blue);
-            g.DrawRectangle(new Pen(Color.Blue), (int)pos_x + 50, (int)pos_y + 30, 100, 10);
-            g.FillRectangle(Brushes.AliceBlue, (int)pos_x + 50, (int)pos_y + 30, 100, 10);
+            graphics.DrawRectangle(new Pen(Color.Blue), (int)pos_x + 50, (int)pos_y + 30, 100, 10);
+            graphics.FillRectangle(Brushes.AliceBlue, (int)pos_x + 50, (int)pos_y + 30, 100, 10);
             Rectangle rect_mana = new Rectangle((int)pos_x + 50, (int)pos_y + 30, 100, 10);
             Rectangle manaProgress = new Rectangle(
                 rect_mana.X,
                 rect_mana.Y,
                 CalculateProgressRectSize(rect_mana, maxMana, mana),
                 rect_mana.Height);
-            DrawManaBar(g, manaProgress);
+            DrawManaBar(graphics, manaProgress);
             #endregion
 
-            g.DrawString($"{Health}", font, Brushes.Red, pos_x + 153, pos_y + 17);
-            g.DrawString($"{Mana}", font, Brushes.Blue, pos_x + 153, pos_y + 30);
+            graphics.DrawString($"{Health}", font, Brushes.Red, pos_x + 153, pos_y + 17);
+            graphics.DrawString($"{Mana}", font, Brushes.Blue, pos_x + 153, pos_y + 30);
 
             //Player level
-            g.DrawString($"Level: {Level}", font, Brushes.Gold, pos_x + 50, pos_y + 50);
+            graphics.DrawString($"Level: {Level}", font, Brushes.Gold, pos_x + 50, pos_y + 50);
             //Player exp
-            g.DrawString($"Exp: {Expirience}", font, new SolidBrush(Color.Gold), pos_x + 110, pos_y + 50);
+            graphics.DrawString($"Exp: {Expirience}", font, new SolidBrush(Color.Gold), pos_x + 110, pos_y + 50);
 
             //exp bar
             #region Expirience bar
-            g.DrawRectangle(new Pen(Color.FromArgb(61, 207, 10)), pos_x, pos_y + 70, 200, 10);
-            g.FillRectangle(new SolidBrush(Color.FromArgb(255, 254, 194)), pos_x, pos_y + 70, 200, 10);
+            graphics.DrawRectangle(new Pen(Color.FromArgb(61, 207, 10)), pos_x, pos_y + 70, 200, 10);
+            graphics.FillRectangle(new SolidBrush(Color.FromArgb(255, 254, 194)), pos_x, pos_y + 70, 200, 10);
             Rectangle rect_exp = new Rectangle((int)pos_x, (int)pos_y + 70, 200, 10);
             Rectangle expProgress = new Rectangle(
                 rect_exp.X,
                 rect_exp.Y,
                 CalculateProgressRectSize(rect_exp, exp_max, exp),
                 rect_exp.Height);
-            DrawExpProgress(g, expProgress);
+            DrawExpProgress(graphics, expProgress);
             #endregion
         }
 

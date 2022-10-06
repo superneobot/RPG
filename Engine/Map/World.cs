@@ -33,22 +33,24 @@ namespace Engine.Map
         /// </summary>
         public Point TileSize { get; set; }
         private Font Font = new Font("Tahoma", 8.0F);
-        Control Control { get; set; }
-        Graphics graphics;
+        //
+        public Graphics graphics { get; set; }
+        public Control Control { get; set; }
+        public Box[,] Boxes { get; set; }
         public World(Control control)
         {
             Control = control;
-            //Tile = new Bitmap("Data/Textures/grass.png"); 
-            //graphics = Graphics.FromHwnd(control.Handle);
         }
-        public void Draw(Graphics graphics)
+        public void Draw()
         {
-            //graphics = Graphics.FromHwnd(Control.Handle);
+            graphics = Graphics.FromImage(Control.BackgroundImage);
             graphics.Clear(Color.Black);
             int width = Width / TileSize.X;
             int height = Height / TileSize.Y;
             Field = new Rectangle[width, height];
             Tiles = new Image[width, height];
+            Boxes = new Box[width, height];
+
             Bounds = new Rectangle(0, 0, Width, Height);
             for (int x = 0; x < width; x++)
             {
@@ -80,16 +82,15 @@ namespace Engine.Map
             }
         }
 
-        public void AddBox(int x, int y, Crate box)
+        public void AddBox(int x, int y, Box box)
         {
             if (x > 0 && y > 0)
             {
-                //Boxes[x, y] = box;
-                //BoxesList.Add(box);
+                Boxes[x, y] = box;
             }
         }
 
-        public void Update(Graphics graphics)
+        public void Update()
         {
             for (int x = 0; x < Width / TileSize.X; x++)
             {
@@ -97,6 +98,8 @@ namespace Engine.Map
                 {
                     if (Tiles[x, y] != null)
                         graphics.DrawImage(Tiles[x, y], Field[x, y].Location.X, Field[x, y].Location.Y);
+                    if (Boxes[x, y] != null)
+                        graphics.DrawImage(Boxes[x, y].Texture, Field[x, y]);
                 }
             }
         }
