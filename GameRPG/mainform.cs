@@ -7,7 +7,9 @@ namespace GameRPG
     {
         //
         EngineRPG.Engine EngineRPG;
-        Graphics g;
+        Graphics graphics;
+        private Rectangle selected_rect;
+
         public mainform()
         {
             InitializeComponent();
@@ -15,7 +17,7 @@ namespace GameRPG
             Application.Idle += delegate { Invalidate(); };
             //
             Viewport.BackgroundImage = new Bitmap(1024, 1024);
-
+            graphics = Graphics.FromImage(Viewport.BackgroundImage);
             EngineRPG = new EngineRPG.Engine()
             {
                 World = new Engine.Map.World(Viewport)
@@ -27,9 +29,10 @@ namespace GameRPG
                 },
                 MiniMap = new Engine.Map.MiniMap(Viewport)
                 {
-                    Width = 120,
-                    Height = 120,
-                    Location = new Point(0, 0)
+                    Width = 128,
+                    Height = 128,
+                    Location = new Point(0, 0),
+                    miniTileSize = new Point(8, 8)
                 },
                 Player = new Engine.Player.Player(Viewport)
                 {
@@ -37,9 +40,18 @@ namespace GameRPG
                     exp_max = 100,
                     exp_evo = 10,
                     Health = 100,
-                    Mana = 100
-                }
+                    Mana = 100,
+                    Speed = 4
+                },
+                //Fireball = new Engine.Player.Fireball()
+                //{
+                //    Width = 16,
+                //    Height = 16,
+                //    Speed = 32.0F,
+
+                //}
             };
+            // EngineRPG.Fireball.Position = new Point(EngineRPG.Player.Location.X, EngineRPG.Player.Location.Y);
         }
         protected override CreateParams CreateParams
         {
@@ -51,13 +63,7 @@ namespace GameRPG
             }
         }
 
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-
-            EngineRPG.StartEngine(g);
-            base.OnPaint(e);
-        }
+        public Rectangle BBox;
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
@@ -80,7 +86,9 @@ namespace GameRPG
 
             if (e.KeyCode == Keys.Space)
             {
-                EngineRPG.Player.Expirience += 10;
+                EngineRPG.Cast();
+                EngineRPG.Fireball.Draw(graphics);
+
             }
             base.OnKeyDown(e);
         }
@@ -98,14 +106,35 @@ namespace GameRPG
             base.OnKeyUp(e);
         }
 
-        private void mainform_MouseDown(object sender, MouseEventArgs e)
+        private void Viewport_MouseDown(object sender, MouseEventArgs e)
         {
             var x = e.X / 32;
             var y = e.Y / 32;
 
-            var sel = EngineRPG.World.Field[x, y];
-            EngineRPG.World.AddBox(x, y, new Engine.Map.GameObject.Box() { Location = new Point(x, y) });
-            EngineRPG.World.Update();
+            selected_rect = EngineRPG.World.Field[x, y];
+            EngineRPG.World.AddBox(x, y, selected_rect);
+
+            Text = $"{selected_rect}";
+        }
+
+        private void Viewport_Paint(object sender, PaintEventArgs e)
+        {
+            EngineRPG.StartEngine();
+            if (EngineRPG.Fireball != null)
+                EngineRPG.Fireball.Draw(graphics);
+        }
+
+        private void Viewport_MouseMove(object sender, MouseEventArgs e)
+        {
+            var x = e.X / 32;
+            var y = e.Y / 32;
+
+            Text = $"{x} x {y}";
+        }
+
+        private void timer1_Tick(object sender, System.EventArgs e)
+        {
+            // Text = $"{EngineRPG.Fireball.Position}";
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using Engine.Map.GameObject;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -36,7 +35,8 @@ namespace Engine.Map
         //
         public Graphics graphics { get; set; }
         public Control Control { get; set; }
-        public Box[,] Boxes { get; set; }
+        //public Box[,] Boxes { get; set; }
+        public Rectangle[,] Boxes { get; set; }
         public World(Control control)
         {
             Control = control;
@@ -49,7 +49,7 @@ namespace Engine.Map
             int height = Height / TileSize.Y;
             Field = new Rectangle[width, height];
             Tiles = new Image[width, height];
-            Boxes = new Box[width, height];
+            Boxes = new Rectangle[width, height];
 
             Bounds = new Rectangle(0, 0, Width, Height);
             for (int x = 0; x < width; x++)
@@ -57,21 +57,13 @@ namespace Engine.Map
                 for (int y = 0; y < height; y++)
                 {
                     Field[x, y] = new Rectangle(x * TileSize.X, y * TileSize.Y, TileSize.X, TileSize.Y);
-                    //graphics.DrawRectangle(new Pen(Color.FromArgb(30, 30, 30), 3), Field[x, y]);
-                    //graphics.FillRectangle(new SolidBrush(Color.FromArgb(10, 10, 10)), Field[x, y]);
+                    graphics.DrawRectangle(new Pen(Color.FromArgb(30, 30, 30), 3), Field[x, y]);
+                    graphics.FillRectangle(new SolidBrush(Color.FromArgb(10, 10, 10)), Field[x, y]);
                     //graphics.DrawString($"{(x + width * y) + 1}", Font, new SolidBrush(Color.FromArgb(30, 30, 30)), Field[x, y].Location.X + 5, Field[x, y].Location.Y + 8);
                 }
             }
 
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    if (Tiles[x, y] != null)
-                        graphics.DrawImage(Tiles[x, y], Field[x, y]);
-                }
-            }
-            graphics.DrawRectangle(new Pen(Color.Black, 1), Bounds);
+            graphics.DrawRectangle(new Pen(Color.Gainsboro, 6), Bounds);
         }
 
         public void AddTile(int x, int y, Image img)
@@ -82,7 +74,7 @@ namespace Engine.Map
             }
         }
 
-        public void AddBox(int x, int y, Box box)
+        public void AddBox(int x, int y, Rectangle box)
         {
             if (x > 0 && y > 0)
             {
@@ -97,9 +89,24 @@ namespace Engine.Map
                 for (int y = 0; y < Height / TileSize.Y; y++)
                 {
                     if (Tiles[x, y] != null)
+                    {
                         graphics.DrawImage(Tiles[x, y], Field[x, y].Location.X, Field[x, y].Location.Y);
+                        //graphics.DrawRectangle(new Pen(Color.Red), Boxes[x, y]);
+                    }
+                }
+            }
+        }
+
+        public void UpdateObjects()
+        {
+            for (int x = 0; x < Width / TileSize.X; x++)
+            {
+                for (int y = 0; y < Height / TileSize.Y; y++)
+                {
                     if (Boxes[x, y] != null)
-                        graphics.DrawImage(Boxes[x, y].Texture, Field[x, y]);
+                    {
+                        //graphics.DrawRectangle(new Pen(Color.Gold), Boxes[x, y]);
+                    }
                 }
             }
         }

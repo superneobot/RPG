@@ -51,8 +51,10 @@
     <Compile Include="Map\GameObject\Box.cs" />
     <Compile Include="Map\MiniMap.cs" />
     <Compile Include="Map\World.cs" />
+    <Compile Include="Player\Fireball.cs" />
     <Compile Include="Player\Model.cs" />
     <Compile Include="Player\Player.cs" />
+    <Compile Include="Player\Spell.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

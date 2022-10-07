@@ -30,6 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(editorform));
             this.ControlPanel = new System.Windows.Forms.Panel();
+            this.cleared_btn = new System.Windows.Forms.Button();
             this.clear_btn = new System.Windows.Forms.Button();
             this.draw_grid_bool = new System.Windows.Forms.CheckBox();
             this.load_btn = new System.Windows.Forms.Button();
@@ -43,7 +44,6 @@
             this.box = new System.Windows.Forms.Button();
             this.mouse_pos = new System.Windows.Forms.Label();
             this.m_size = new System.Windows.Forms.Label();
-            this.cleared_btn = new System.Windows.Forms.Button();
             this.Viewport = new EditorRPG.ViewPortBox();
             this.ControlPanel.SuspendLayout();
             this.SuspendLayout();
@@ -68,9 +68,23 @@
             this.ControlPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.ControlPanel.Location = new System.Drawing.Point(0, 0);
             this.ControlPanel.Name = "ControlPanel";
-            this.ControlPanel.Size = new System.Drawing.Size(1026, 100);
+            this.ControlPanel.Size = new System.Drawing.Size(1024, 100);
             this.ControlPanel.TabIndex = 0;
             this.ControlPanel.Click += new System.EventHandler(this.ControlPanel_Click);
+            // 
+            // cleared_btn
+            // 
+            this.cleared_btn.BackColor = System.Drawing.Color.Black;
+            this.cleared_btn.FlatAppearance.BorderSize = 0;
+            this.cleared_btn.FlatAppearance.MouseDownBackColor = System.Drawing.Color.DarkGray;
+            this.cleared_btn.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Gainsboro;
+            this.cleared_btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cleared_btn.Location = new System.Drawing.Point(431, 8);
+            this.cleared_btn.Name = "cleared_btn";
+            this.cleared_btn.Size = new System.Drawing.Size(32, 32);
+            this.cleared_btn.TabIndex = 7;
+            this.cleared_btn.UseVisualStyleBackColor = false;
+            this.cleared_btn.Click += new System.EventHandler(this.cleared_btn_Click);
             // 
             // clear_btn
             // 
@@ -216,26 +230,12 @@
             this.m_size.TabIndex = 0;
             this.m_size.Text = "Map Size: ";
             // 
-            // cleared_btn
-            // 
-            this.cleared_btn.BackColor = System.Drawing.Color.Black;
-            this.cleared_btn.FlatAppearance.BorderSize = 0;
-            this.cleared_btn.FlatAppearance.MouseDownBackColor = System.Drawing.Color.DarkGray;
-            this.cleared_btn.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Gainsboro;
-            this.cleared_btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cleared_btn.Location = new System.Drawing.Point(431, 8);
-            this.cleared_btn.Name = "cleared_btn";
-            this.cleared_btn.Size = new System.Drawing.Size(32, 32);
-            this.cleared_btn.TabIndex = 7;
-            this.cleared_btn.UseVisualStyleBackColor = false;
-            this.cleared_btn.Click += new System.EventHandler(this.cleared_btn_Click);
-            // 
             // Viewport
             // 
             this.Viewport.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Viewport.Location = new System.Drawing.Point(0, 100);
             this.Viewport.Name = "Viewport";
-            this.Viewport.Size = new System.Drawing.Size(1026, 1025);
+            this.Viewport.Size = new System.Drawing.Size(1024, 1024);
             this.Viewport.TabIndex = 1;
             this.Viewport.Paint += new System.Windows.Forms.PaintEventHandler(this.Viewport_Paint);
             this.Viewport.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Viewport_MouseDown);
@@ -246,7 +246,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1026, 1125);
+            this.ClientSize = new System.Drawing.Size(1024, 1124);
             this.Controls.Add(this.Viewport);
             this.Controls.Add(this.ControlPanel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;

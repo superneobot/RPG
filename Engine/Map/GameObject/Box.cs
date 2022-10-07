@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Imaging;
 
 namespace Engine.Map.GameObject
 {
@@ -13,22 +12,27 @@ namespace Engine.Map.GameObject
         public Point Location { get; set; }
         public Image Texture { get; set; }
 
-        public Box()
+        public Box(int width, int height, Point location, Rectangle bounds)
         {
-            Width = 32;
-            Height = 32;
-            Bounds = new Rectangle(Location.X, Location.Y, Width, Height);
-            var tex = new Bitmap(32, 32, PixelFormat.Format32bppRgb);
-            Texture = Image.FromFile("Data/box.gif");
-            Graphics g = Graphics.FromImage(tex);
-            g.DrawImage(Texture, Bounds);
-            //Draw(g);
+            Width = width;
+            Height = height;
+            Location = location;
+            Bounds = bounds;
+            Texture = new Bitmap("Data/box.gif");
         }
 
         public void Draw(Graphics g)
         {
-            Bounds = new Rectangle(Location.X, Location.Y, Width, Height);
-            g.DrawRectangle(new Pen(Color.Red), Bounds);
+            if (Texture == null)
+            {
+                g.DrawRectangle(new Pen(Color.Red), Bounds);
+                g.DrawLine(new Pen(Color.Red), new Point(Bounds.Location.X, Bounds.Location.Y), new Point(Bounds.Location.X + Width, Bounds.Location.Y + Height));
+                g.DrawLine(new Pen(Color.Red), new Point(Bounds.Location.X, Bounds.Location.Y + Height), new Point(Bounds.Location.X + Width, Bounds.Location.Y));
+            }
+            else
+            {
+                g.DrawImage(Texture, Bounds);
+            }
         }
     }
 }

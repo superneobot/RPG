@@ -28,7 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.Viewport = new GameRPG.ViewPortBox();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // Viewport
@@ -39,6 +41,14 @@
             this.Viewport.Name = "Viewport";
             this.Viewport.Size = new System.Drawing.Size(1026, 1026);
             this.Viewport.TabIndex = 0;
+            this.Viewport.Paint += new System.Windows.Forms.PaintEventHandler(this.Viewport_Paint);
+            this.Viewport.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Viewport_MouseDown);
+            this.Viewport.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Viewport_MouseMove);
+            // 
+            // timer1
+            // 
+            this.timer1.Enabled = true;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // mainform
             // 
@@ -53,7 +63,6 @@
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Game RPG";
-            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.mainform_MouseDown);
             this.ResumeLayout(false);
 
         }
@@ -61,6 +70,7 @@
         #endregion
 
         private ViewPortBox Viewport;
+        private System.Windows.Forms.Timer timer1;
     }
 }
 

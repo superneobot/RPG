@@ -10,6 +10,10 @@ namespace Engine.Map
         public Rectangle Bounds { get; set; }
         public Point Location { get; set; }
         Graphics graphics { get; set; }
+        public Image[,] miniTiles { get; set; }
+        public Rectangle[,] miniField { get; set; }
+        public Point miniTileSize { get; set; }
+        public Image MiniMapBMP { get; set; }
         public MiniMap(Control control) { graphics = Graphics.FromImage(control.BackgroundImage); }
         public void Draw(Player.Player player, World map)
         {
@@ -19,7 +23,9 @@ namespace Engine.Map
             graphics.DrawString($"Stage: {0}", new Font("Motiva Sans", 10.0F, FontStyle.Regular, GraphicsUnit.Pixel), Brushes.Black, new PointF(Location.X, Location.Y + 1));
             graphics.DrawRectangle(new Pen(Color.Silver, 3), Bounds);
             graphics.FillRectangle(new SolidBrush(Color.FromArgb(10, 10, 10)), Bounds);
+            graphics.DrawImage(MiniMapBMP, Bounds);
 
+            Bounds = new Rectangle(0, 0, Width, Height);
             var posx = (player.Location.X * Width) / (map.Width);
             var posy = (player.Location.Y * Height) / (map.Width);
             DrawPlayerOnMap((int)posx, (int)posy);
@@ -27,7 +33,7 @@ namespace Engine.Map
 
         private void DrawPlayerOnMap(int posx, int posy)
         {
-            var playerOnMap = new Rectangle(Location.X + posx + 1, Location.Y + posy + 15, 4, 4);
+            var playerOnMap = new Rectangle(Location.X + posx + 2, Location.Y + posy + 17, 2, 2);
             graphics.FillRectangle(Brushes.Red, playerOnMap);
         }
     }

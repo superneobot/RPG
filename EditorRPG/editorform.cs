@@ -6,18 +6,29 @@ using System.Windows.Forms;
 
 namespace EditorRPG
 {
+    public enum State
+    {
+        Texture,
+        Object
+    }
+
     public partial class editorform : Form
     {
+        State state;
         Engine Engine;
         Timer Updater;
         public Image Texture;
         private Rectangle selected_rect;
         bool isPressed = false;
+        public Bitmap Screenshot;
+        private Image temp;
+
         public editorform()
         {
             InitializeComponent();
             //SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
             Application.Idle += delegate { Viewport.Invalidate(); };
+            state = State.Texture;
             Engine = new Engine(Viewport);
             Texture = new Bitmap(32, 32);
 
@@ -59,7 +70,7 @@ namespace EditorRPG
 
         private void Viewport_Paint(object sender, PaintEventArgs e)
         {
-            
+
         }
 
         private void editorform_Load(object sender, System.EventArgs e)
@@ -75,7 +86,31 @@ namespace EditorRPG
             int mouse_y = e.Y / 32;
             isPressed = true;
             selected_rect = Engine.Map.Field[mouse_x, mouse_y];
-            Engine.Map.ReDraw(mouse_x, mouse_y, Texture);
+            if (e.Button == MouseButtons.Left)
+            {
+                if (state == State.Texture)
+                {
+                    Engine.Map.ReDraw(mouse_x, mouse_y, Texture);
+                }
+                else if (state == State.Object)
+                {
+                    Engine.Map.AddBoxes(mouse_x, mouse_y, selected_rect);
+                }
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                if (state == State.Texture)
+                {
+                    var bmp = new Bitmap(32, 32, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                    Engine.Map.ReDraw(mouse_x, mouse_y, bmp);
+                    var item = Engine.Map.Tiles[mouse_x, mouse_y];
+                }
+                else if (state == State.Object)
+                {
+                    var list = Engine.Map.Boxes[mouse_x, mouse_y];
+                    Engine.Map.Boxes[mouse_x, mouse_y] = new Rectangle(0, 0, 0, 0);
+                }
+            }
         }
 
         private void Viewport_MouseMove(object sender, MouseEventArgs e)
@@ -112,13 +147,28 @@ namespace EditorRPG
                 if (save.ShowDialog() == DialogResult.OK)
                 {
                     string path = save.FileName;
+                    CreateMiniMap(save);
                     IFormatter formatter = new BinaryFormatter();
                     using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.Write))
                     {
                         formatter.Serialize(fs, Engine.Map.Tiles);
+                        formatter.Serialize(fs, Engine.Map.Boxes);
+                        formatter.Serialize(fs, temp);
                     }
                 }
             }
+        }
+
+        private void CreateMiniMap(SaveFileDialog save)
+        {
+            Screenshot = new Bitmap(Viewport.Width, Viewport.Height);
+            Viewport.DrawToBitmap(Screenshot, Viewport.ClientRectangle);
+            //var temp = new Bitmap(Viewport.Width, Viewport.Height);
+            Screenshot.Save(save.FileName + ".bmp");
+            var image = Image.FromFile("temp.bmp");
+            temp = ScaleImage(image, 128, 128);
+            temp.Save(save.FileName + "_mini.bmp");
+            File.Delete(save.FileName + ".bmp");
         }
 
         private void load_btn_Click(object sender, System.EventArgs e)
@@ -134,51 +184,102 @@ namespace EditorRPG
                     using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read))
                     {
                         Engine.Map.Tiles = (Image[,])formatter.Deserialize(fs);
+                        Engine.Map.Boxes = (Rectangle[,])new BinaryFormatter().Deserialize(fs);
+                        temp = (Image)new BinaryFormatter().Deserialize(fs);
                     }
                 }
             }
             Engine.Map.Update();
         }
+
+        private Image ScaleImage(Image source, int width, int height)
+        {
+
+            Image dest = new Bitmap(width, height);
+            using (Graphics gr = Graphics.FromImage(dest))
+            {
+                gr.FillRectangle(Brushes.White, 0, 0, width, height);  // Очищаем экран
+                gr.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+
+                float srcwidth = source.Width;
+                float srcheight = source.Height;
+                float dstwidth = width;
+                float dstheight = height;
+
+                if (srcwidth <= dstwidth && srcheight <= dstheight)  // Исходное изображение меньше целевого
+                {
+                    int left = (width - source.Width) / 2;
+                    int top = (height - source.Height) / 2;
+                    gr.DrawImage(source, left, top, source.Width, source.Height);
+                }
+                else if (srcwidth / srcheight > dstwidth / dstheight)  // Пропорции исходного изображения более широкие
+                {
+                    float cy = srcheight / srcwidth * dstwidth;
+                    float top = ((float)dstheight - cy) / 2.0f;
+                    if (top < 1.0f) top = 0;
+                    gr.DrawImage(source, 0, top, dstwidth, cy);
+                }
+                else  // Пропорции исходного изображения более узкие
+                {
+                    float cx = srcwidth / srcheight * dstheight;
+                    float left = ((float)dstwidth - cx) / 2.0f;
+                    if (left < 1.0f) left = 0;
+                    gr.DrawImage(source, left, 0, cx, dstheight);
+                }
+
+                return dest;
+            }
+        }
+
         private void box_Click(object sender, System.EventArgs e)
         {
-            Texture = new Bitmap("Data/Textures/box.gif");
-            Texture.Tag = "Box";
-            Text = $"Editor RPG - [{Texture.Tag}]";
+            //Texture = new Bitmap("Data/Textures/box.gif");
+            //Texture.Tag = "Box";
+            //state = State.Texture;
+            //Text = $"Editor RPG - [{Texture.Tag}]";
+
+            state = State.Object;
         }
         private void grass_Click(object sender, System.EventArgs e)
         {
             Texture = new Bitmap("Data/Textures/grass.jpg");
             Texture.Tag = "Grass";
+            state = State.Texture;
             Text = $"Editor RPG - [{Texture.Tag}]";
         }
         private void bottom_grass_btn_Click(object sender, System.EventArgs e)
         {
             Texture = new Bitmap("Data/Textures/bottom_grass.jpg");
             Texture.Tag = "Bottom grass";
+            state = State.Texture;
             Text = $"Editor RPG - [{Texture.Tag}]";
         }
         private void earth_Click(object sender, System.EventArgs e)
         {
             Texture = new Bitmap("Data/Textures/earth.gif");
             Texture.Tag = "Earth";
+            state = State.Texture;
             Text = $"Editor RPG - [{Texture.Tag}]";
         }
         private void brick_btn_Click(object sender, System.EventArgs e)
         {
             Texture = new Bitmap("Data/Textures/brick.gif");
             Texture.Tag = "Brick";
+            state = State.Texture;
             Text = $"Editor RPG - [{Texture.Tag}]";
         }
         private void road_btn_Click(object sender, System.EventArgs e)
         {
             Texture = new Bitmap("Data/Textures/road.gif", true);
             Texture.Tag = "Road";
+            state = State.Texture;
             Text = $"Editor RPG - [{Texture.Tag}]";
         }
         private void top_grass_btn_Click(object sender, System.EventArgs e)
         {
             Texture = new Bitmap("Data/Textures/top_grass.jpg");
             Texture.Tag = "Top grass";
+            state = State.Texture;
             Text = $"Editor RPG - [{Texture.Tag}]";
         }
 
